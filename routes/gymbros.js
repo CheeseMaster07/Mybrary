@@ -1,30 +1,42 @@
 const express = require('express');
 const router = express.Router();
-
-
-let gymbros = [{name: 'Gabbe'}, {name: 'John'}]
+const Gymbro = require('../models/gymbro')
 
 // All gymbros route
 router
 .route('/')
-.get((req, res) => {
-  res.render("gymbros/index", {gymbros: gymbros});
-})
-.post((req, res) => {
-  const valid = true
-  if (valid) {
-    gymbros.push({name: req.body.name});
-    res.redirect('/gymbros')
-  } else {
-    console.log("Error")
-    res.render('gymbros/new', {name: req.body.name})
+.get( async (req, res) => {
+  try {
+    const gymbros = await Gymbro.find({})
+    res.render("gymbros/index", {gymbros: gymbros});
+  } catch (err) {
+    res.redirect('/')
+    console.error(err)
   }
+})
+.post( async (req, res) => {
+  const gymbro = new Gymbro({
+    name: req.body.name,
+    age: req.body.age,
+    favoriteExercise: req.body.favoriteExercise,
+    bench: req.body.bench,
+    squat: req.body.squat,
+    deadlift: req.body.deadlift
+  })
 
+  try {
+    const newGymbro = await gymbro.save()
+    //res.redirect(`gymbros/${newGymbro.id}`)
+    res.redirect('/gymbros')
+  } catch (err) {
+    res.render('gymbros/new', {gymbro: gymbro, errorMessage: "Error when creating gymbro"})
+    console.log(err)
+  }
 })
 
 // new gymbro route
 router.get('/new', (req, res) => {
-  res.render("gymbros/new");
+  res.render("gymbros/new", {gymbro: new Gymbro()});
 })
 
 

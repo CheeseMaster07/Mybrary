@@ -1,3 +1,9 @@
 <% for (let i = 0; i < gymbros.length; i++) { %>
-<p><%= gymbros[i].name %></p>
+<h2><%= gymbros[i].name %></h2>
+<p>Age: <%= gymbros[i].age %></p>
+<p>Favorite exercise: <%= gymbros[i].favoriteExercise %></p>
+<p>Bench PR: <%= gymbros[i].bench %> kg</p>
+<p>Squat PR: <%= gymbros[i].squat %> kg</p>
+<p>Deadlift PR: <%= gymbros[i].deadlift %> kg</p>
+<br />
 <% } %>
