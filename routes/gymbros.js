@@ -6,9 +6,13 @@ const Gymbro = require('../models/gymbro')
 router
 .route('/')
 .get( async (req, res) => {
+  let searchOptions = {}
+  if (req.query.name != null && req.query.name != '') {
+    searchOptions.name = new RegExp(req.query.name, 'i')
+  }
   try {
-    const gymbros = await Gymbro.find({})
-    res.render("gymbros/index", {gymbros: gymbros});
+    const gymbros = await Gymbro.find(searchOptions)
+    res.render("gymbros/index", {gymbros: gymbros, searchOptions: req.query});
   } catch (err) {
     res.redirect('/')
     console.error(err)
