@@ -5,12 +5,26 @@
   <button type="submit">Search</button>
 </form>
 
+<% if ( filter == false) { %>
+  <form action="/gymbros" method="GET">
+    <button type="submit" name="showFilter">Filter</button>
+  </form>
+<% } else { %>
+  <p>CODE</p>
+  <form action="/gymbros" method="GET">
+    <button type="submit" name="cancelFilter">Cancel</button>
+  </form>
+  <form action="/gymbros" method="GET">
+    <button type="submit" name="applyFilter">Apply</button>
+  </form>
+<% } %> 
+
 <% for (let i = 0; i < gymbros.length; i++) { %>
-<h2><%= gymbros[i].name %></h2>
-<p>Age: <%= gymbros[i].age %></p>
-<p>Favorite exercise: <%= gymbros[i].favoriteExercise %></p>
-<p>Bench PR: <%= gymbros[i].bench %> kg</p>
-<p>Squat PR: <%= gymbros[i].squat %> kg</p>
-<p>Deadlift PR: <%= gymbros[i].deadlift %> kg</p>
-<br />
+  <h2><%= gymbros[i].name %></h2>
+  <p>Age: <%= gymbros[i].age %></p>
+  <p>Favorite exercise: <%= gymbros[i].favoriteExercise %></p>
+  <p>Bench PR: <%= gymbros[i].bench %> kg</p>
+  <p>Squat PR: <%= gymbros[i].squat %> kg</p>
+  <p>Deadlift PR: <%= gymbros[i].deadlift %> kg</p>
+  <br />
 <% } %>

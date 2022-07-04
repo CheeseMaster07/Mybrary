@@ -6,13 +6,26 @@ const Gymbro = require('../models/gymbro')
 router
 .route('/')
 .get( async (req, res) => {
+  if (req.query.showFilter !== undefined) {
+    filter = true
+    console.log(filter)
+
+  } else if (req.query.cancelFilter !== undefined) {
+    filter = false
+    console.log(filter)
+
+  } else if (req.query.applyFilter !== undefined) {
+    console.log('Filter Apply')
+
+  } else {filter = false}
+
   let searchOptions = {}
   if (req.query.name != null && req.query.name != '') {
     searchOptions.name = new RegExp(req.query.name, 'i')
   }
   try {
     const gymbros = await Gymbro.find(searchOptions)
-    res.render("gymbros/index", {gymbros: gymbros, searchOptions: req.query});
+    res.render("gymbros/index", {gymbros: gymbros, searchOptions: req.query, filter: filter});
   } catch (err) {
     res.redirect('/')
     console.error(err)
@@ -42,6 +55,8 @@ router
 router.get('/new', (req, res) => {
   res.render("gymbros/new", {gymbro: new Gymbro()});
 })
+
+// Gymbro by id
 
 
 module.exports = router
