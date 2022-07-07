@@ -1,0 +1,24 @@
+<h1><%= gymbro.name %></h1>
+<p>Age: <%= gymbro.age %></p>
+<p>Favorite exercise: <%= gymbro.favoriteExercise %></p>
+<p>Bench PR: <%= gymbro.bench %> kg</p>
+<p>Squat PR: <%= gymbro.squat %> kg</p>
+<p>Deadlift PR: <%= gymbro.deadlift %> kg</p>
+<br>
+<br>
+
+<h2>Posts</h2>
+<% if (posts.length > 0) { %> 
+  <% posts.forEach(post => { %>  
+    <a href='/gymbros/<%= gymbro.id %>'>
+      <p><%= gymbro.name %> </p>
+    </a> 
+    <p>Text: <%= post.text %></p>
+    <p>Likes: <%= post.numOfLikes %></p>
+    <p>Created: <%= post.createdAtDate %></p>
+    <br />
+    <hr>
+  <% }) %> 
+<% } else { %>
+  <p><%= gymbro.name %> hasn't posted anything yet</p>
+<% } %>  

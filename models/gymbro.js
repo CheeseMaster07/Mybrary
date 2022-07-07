@@ -11,6 +11,16 @@ const gymbroSchema = new mongoose.Schema({
     required: true
   },
 
+  bodyWeight: {
+    type: Number,
+    required: true
+  },
+
+  height: {
+    type: Number,
+    required: true
+  },
+
   bench: {
     type: Number,
     required: true
@@ -31,7 +41,7 @@ const gymbroSchema = new mongoose.Schema({
     required: true
   }
 
-  
+
 })
 
 

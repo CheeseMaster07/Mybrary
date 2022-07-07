@@ -1,0 +1,26 @@
+<h1>Search Posts</h1>
+<form action="/posts" method="GET">
+  <label>Gymbro</label>
+  <input type="text" name="name" value="<%= searchOptions.name %>" />
+  <button type="submit">Search</button>
+</form>
+
+<% posts.forEach(post => {  %>
+  <% gymbros.forEach(gymbro => { %> 
+    <% if (gymbro.id == post.gymbro) { %> 
+      <a href='/gymbros/<%= gymbro.id %>'>
+        <p><%= gymbro.name %> </p>
+      </a>
+    <% } %> 
+  <% }) %> 
+  <div>
+    <img src="<%= post.postImagePath %> " width="150" height="100">
+  </div>
+  <p>Path: <%= post.postImagePath %> </p>
+  <p>Text: <%= post.text %></p>
+  <p>Likes: <%= post.numOfLikes %></p>
+  <p>Created: <%= post.createdAtDate %></p>
+  <p>ID: <%= post.id  %> </p>
+  <br />
+  <hr>
+<% }) %>

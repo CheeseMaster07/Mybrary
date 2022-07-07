@@ -1,0 +1,19 @@
+<div>
+  <label>Gymbro</label>
+  <select name="gymbro" required="true">
+    <% gymbros.forEach(gymbro => { %>
+      <option selected label="<%= gymbro.name %>" value="<%= gymbro.id %>">
+    <% }) %>
+  </select>
+</div>
+
+<div>
+  <label>Text</label>
+  <textarea required="true" name="text"><%= post.text %></textarea>
+</div>
+
+<div>
+  <label>Image</label>
+  <input type="file" name="postImage">
+</div>
+

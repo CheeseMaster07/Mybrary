@@ -10,21 +10,24 @@
     <button type="submit" name="showFilter">Filter</button>
   </form>
 <% } else { %>
-  <p>CODE</p>
-  <form action="/gymbros" method="GET">
-    <button type="submit" name="cancelFilter">Cancel</button>
-  </form>
-  <form action="/gymbros" method="GET">
-    <button type="submit" name="applyFilter">Apply</button>
-  </form>
+  <%- include('_filter_form_fields')  %> 
 <% } %> 
 
-<% for (let i = 0; i < gymbros.length; i++) { %>
-  <h2><%= gymbros[i].name %></h2>
-  <p>Age: <%= gymbros[i].age %></p>
-  <p>Favorite exercise: <%= gymbros[i].favoriteExercise %></p>
-  <p>Bench PR: <%= gymbros[i].bench %> kg</p>
-  <p>Squat PR: <%= gymbros[i].squat %> kg</p>
-  <p>Deadlift PR: <%= gymbros[i].deadlift %> kg</p>
+<% gymbros.forEach(gymbro => { %>
+  <a href='/gymbros/<%= gymbro.id %>'>
+    <h2><%= gymbro.name %></h2>
+  </a>
+  <p>Age: <%= gymbro.age %></p>
+  <p>Bodyweight: <%= gymbro.bodyWeight %></p>
+  <p>Height: <%= gymbro.height %></p>
+  <p>Favorite exercise: <%= gymbro.favoriteExercise %></p>
+  <p>Bench PR: <%= gymbro.bench %> kg</p>
+  <p>Squat PR: <%= gymbro.squat %> kg</p>
+  <p>Deadlift PR: <%= gymbro.deadlift %> kg</p>
   <br />
-<% } %>
+  <hr>
+<% }) %>
+
+<% if (gymbros.length == 0) { %>
+  <p>No results :(</p>
+<% } %>  

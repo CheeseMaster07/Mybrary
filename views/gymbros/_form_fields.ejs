@@ -1,28 +1,43 @@
-<label>Name</label>
-<input type="text" name="name" value="<%= gymbro.name %>" />
-<br />
-<br />
-<label>Age</label>
-<input type="number" name="age" value="<%= gymbro.age %>" />
-<br />
-<br />
-<label>Favorite exercise</label>
-<input
+<div>
+  <label>Name</label>
+  <input required="true" type="text" name="name" value="<%= gymbro.name %>" />
+</div>
+
+<div>
+  <label>Age</label>
+  <input required="true" type="number" name="age" value="<%= gymbro.age %>" />
+</div>
+
+<div>
+  <label>Bodyweight</label>
+  <input required="true" type="number" name="bodyWeight" value="<%= gymbro.bodyWeight %>" /> kg
+</div>
+
+<div>
+  <label>Height</label>
+  <input required="true" type="number" name="height" value="<%= gymbro.height %>" /> cm
+</div>
+
+<div>
+  <label>Favorite exercise</label>
+  <input
+  required="true"
   type="text"
   name="favoriteExercise"
-  value="<%= gymbro.favoriteExercise %>"
-/>
-<br />
-<br />
-<label>Bench PR</label>
-<input type="number" name="bench" value="<%= gymbro.bench %>" /> kg
-<br />
-<br />
-<label>Squat PR</label>
-<input type="number" name="squat" value="<%= gymbro.squat %>" /> kg
-<br />
-<br />
-<label>Deadlift PR</label>
-<input type="number" name="deadlift" value="<%= gymbro.deadlift %>" /> kg
-<br />
-<br />
+  value="<%= gymbro.favoriteExercise %>"/>
+</div>
+
+<div>
+  <label>Bench PR</label>
+  <input required="true" type="number" name="bench" value="<%= gymbro.bench %>" /> kg
+</div>
+
+<div>
+  <label>Squat PR</label>
+  <input required="true" type="number" name="squat" value="<%= gymbro.squat %>" /> kg
+</div>
+
+<div>
+  <label>Deadlift PR</label>
+  <input required="true" type="number" name="deadlift" value="<%= gymbro.deadlift %>" /> kg
+</div>
