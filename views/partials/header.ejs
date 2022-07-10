@@ -1,7 +1,38 @@
 <header>
   <nav>
-    <a href="/">Mybrary</a>
-    <a href="/users">Users</a>
-    <a href="/users/new">Add User</a>
+    <a href="/">
+      Home
+    </a>
+    <a href="/ranks">
+      Ranks
+    </a>
+    <a href="/users">
+      users
+    </a>
+    <a href="/posts">
+      Posts
+    </a>
+    <a href="/posts/new">
+      Add post
+    </a>
+    <br>
+    <% if (locals.isAuthenticated) { %>
+      <a href="/users/<%= reqUser._id %> ">
+        <%= reqUser.username %> 
+      </a>
+    <% } else { %> 
+    <a href="/register">
+      Register
+    </a>
+    <% } %>
+    <% if (locals.isAuthenticated) { %>
+      <form action="/logout?_method=DELETE" method="POST">
+        <button type="submit">Logout</button>
+      </form>
+    <% } else { %> 
+    <a href="/login">
+      Login
+    </a>
+    <% } %> 
   </nav>
 </header>

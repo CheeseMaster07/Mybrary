@@ -1,3 +1,45 @@
-<% for (let i = 0; i < users.length; i++) { %>
-<p><%= users[i].name %></p>
-<% } %>
+<h1>Search users</h1>
+<form action="/users" method="GET">
+  <label>Name</label>
+  <input type="text" name="name" value="<%= searchOptions.name %>" />
+  <button type="submit">Search</button>
+</form>
+
+<% if ( filter == false) { %>
+  <form action="/users" method="GET">
+    <button type="submit" name="showFilter">Filter</button>
+  </form>
+<% } else { %>
+  <%- include('_filter_form_fields')  %> 
+<% } %> 
+
+<% users.forEach(user => { %>
+  <div>
+    <a href='/users/<%= user.id %>'>
+      <h2><%= user.username %></h2>
+    </a>
+    <% try { %> 
+      <% isThisUser = false %> 
+      <% if(reqUser._id === user.id) { %>
+        <% isThisUser = true %> 
+        <h2>(You)</h2>
+      <% } %> 
+    <% } catch { %> 
+    <% } %>  
+  </div>  
+  <p>Rank: <%= user.rank %></p>
+  <p>Name: <%= user.name %></p>
+  <p>Age: <%= user.age %></p>
+  <p>Bodyweight: <%= user.bodyWeight %></p>
+  <p>Height: <%= user.height %></p>
+  <p>Favorite exercise: <%= user.favoriteExercise %></p>
+  <p>Bench PR: <%= user.bench %> kg</p>
+  <p>Squat PR: <%= user.squat %> kg</p>
+  <p>Deadlift PR: <%= user.deadlift %> kg</p>
+  <br />
+  <hr>
+<% }) %>
+
+<% if (users.length == 0) { %>
+  <p>No results :(</p>
+<% } %>  

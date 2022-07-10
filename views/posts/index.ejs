@@ -1,0 +1,48 @@
+<h1>Search Posts</h1>
+<form action="/posts" method="GET">
+  <label>user</label>
+  <input type="text" name="name" value="<%= searchOptions.name %>" />
+  <button type="submit">Search</button>
+</form>
+
+<% posts.forEach(post => { %>
+  <% users.forEach(user => { %> 
+    <% if (user.id == post.user) { %>
+      <a href="/users/<%= user.id %>">
+        <p><%= user.username %></p>
+      </a>
+      <% try { %> 
+        <% isThisUser = false %> 
+        <% if(reqUser._id === user.id) { %>
+          <% isThisUser = true %> 
+          <p>(You)</p>
+        <% } %> 
+      <% } catch { %> 
+      <% } %>
+    <% } %> 
+  <% }) %>
+  <% if (post.postImagePath != null) { %>
+    <% if(post.postImageFileType !== 'mp4') { %>
+      <div style="width: 275px">
+        <img src="<%= post.postImagePath %>" width="100%"/>
+      </div>
+    <% } else { %>
+      <div style="width: 275px">
+        <video controls width="100%">
+          <source src="<%= post.postImagePath %>" type="video/mp4" />
+          error video
+        </video>
+      </div>
+    <% } %>
+  <% } %>
+
+  <p><%= post.text %></p>
+  <p>Likes: <%= post.numOfLikes %></p>
+  <p>Created: <%= post.createdAtDate.toISOString().split('T')[0] %></p>
+  <% if (isThisUser) { %>
+    <a href="/posts">Edit</a>
+    <a href="/posts">Delete</a>
+  <% } %>  
+  <br />
+  <hr />
+<% }) %>

@@ -1,0 +1,21 @@
+<h2>Login</h2>
+<br />
+<form action="/login" method="POST">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+
+  <div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  
+  <a href="/">Cancel</a>
+  <button type="submit">Submit</button>
+</form>
+<a href="/register">Register</a>
+
+<% if(messages.error) { %>
+  <%= messages.error  %> 
+<% } %> 
