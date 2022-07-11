@@ -1,26 +1,51 @@
 <h1>Search Posts</h1>
 <form action="/posts" method="GET">
-  <label>Gymbro</label>
+  <label>user</label>
   <input type="text" name="name" value="<%= searchOptions.name %>" />
   <button type="submit">Search</button>
 </form>
 
-<% posts.forEach(post => {  %>
-  <% gymbros.forEach(gymbro => { %> 
-    <% if (gymbro.id == post.gymbro) { %> 
-      <a href='/gymbros/<%= gymbro.id %>'>
-        <p><%= gymbro.name %> </p>
+<% posts.forEach(post => { %>
+  <% let isThisUser %> 
+  <% users.forEach(user => { %> 
+    <% try { %> 
+      <% isThisUser = false %> 
+      <% if(reqUser._id === user.id) { %>
+        <% isThisUser = true %> 
+      <% } %> 
+    <% } catch { %> 
+    <% } %>
+    <% if (user.id == post.user) { %>
+      <a href="/users/<%= user.id %>">
+        <p><%= user.username %></p>
       </a>
+      <% if(isThisUser) { %>
+        <p>(You)</p>
+      <% } %>  
     <% } %> 
-  <% }) %> 
-  <div>
-    <img src="<%= post.postImagePath %> " width="150" height="100">
-  </div>
-  <p>Path: <%= post.postImagePath %> </p>
-  <p>Text: <%= post.text %></p>
+  <% }) %>
+  <% if (post.postImagePath != null) { %>
+    <% if(post.postImageFileType !== 'mp4') { %>
+      <div style="width: 275px">
+        <img src="<%= post.postImagePath %>" width="100%"/>
+      </div>
+    <% } else { %>
+      <div style="width: 275px">
+        <video controls width="100%">
+          <source src="<%= post.postImagePath %>" type="video/mp4" />
+          error video
+        </video>
+      </div>
+    <% } %>
+  <% } %>
+
+  <p><%= post.text %></p>
   <p>Likes: <%= post.numOfLikes %></p>
-  <p>Created: <%= post.createdAtDate %></p>
-  <p>ID: <%= post.id  %> </p>
+  <p>Created: <%= post.createdAtDate.toISOString().split('T')[0] %></p>
+  <% if (isThisUser) { %>
+    <a href="/posts">Edit</a>
+    <a href="/posts">Delete</a>
+  <% } %>  
   <br />
-  <hr>
+  <hr />
 <% }) %>

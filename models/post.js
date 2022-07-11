@@ -4,10 +4,10 @@ const path = require('path')
 const postImageBasePath = 'uploads/postImages'
 
 const postSchema = new mongoose.Schema({
-  gymbro: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     //required: true,
-    ref: 'Gymbro'
+    ref: 'user'
   },
   text: {
     type: String,
@@ -23,9 +23,12 @@ const postSchema = new mongoose.Schema({
     default: 0
   },
   postImageName: {
-    type: String,
+    type: String
   },
   postImagePath: {
+    type: String
+  },
+  postImageFileType: {
     type: String
   }
 

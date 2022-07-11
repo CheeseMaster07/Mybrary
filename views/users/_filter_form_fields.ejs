@@ -1,0 +1,33 @@
+<!-- Variables -->
+<% let ageRanges = [] %>
+<% let innerRange = [] %>
+<% for (let i = 0; i < 9; i++) {  %> 
+  <% for (let j = 0; j < 10; j++) { %> 
+    <% innerRange.push((j + i * 10) + 10) %> 
+  <% } %> 
+  <% ageRanges.push(innerRange) %>
+  <% innerRange = [] %>
+<% } %> 
+
+
+<!-- Actual Form -->
+<div> 
+  <form action="/users" method="GET">
+    <label>Age</label>
+    <select name="ageRange">
+      <option label="---" value="undefined"></option>
+      <% ageRanges.forEach(ageRange => { %> 
+        <option label="<%= ageRange[0] %> - <%= ageRange[ageRange.length - 1] %>" value="<%= ageRange %> "></option>
+      <% }) %> 
+    </select>
+    <label>Rank</label>
+    <br>
+    <button type="submit" name="applyFilter">Apply</button>
+  </form>
+</div>
+
+<div>
+  <form action="/users" method="GET">
+    <button type="submit" name="cancelFilter">Cancel</button>
+  </form>
+</div>

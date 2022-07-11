@@ -3,10 +3,11 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const Gymbro = require('../models/gymbro')
+const User = require('../models/user')
 const Post = require('../models/post')
+const check = require('../funcs')
 const uploadPath = path.join('public', Post.postImageBasePath)
-const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg']
+const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'video/mp4']
 const upload = multer({
   dest: uploadPath,
   fileFilter: (req, file, callback) => {
@@ -19,16 +20,17 @@ const upload = multer({
 router
   .route('/')
   .get(async (req, res) => {
+    const reqUser = await req.user
     try {
       let posts = await Post.find({})
-      const gymbros = await Gymbro.find({})
+      const users = await User.find({})
 
       if (req.query.name !== undefined) {
         newPosts = []
         posts.forEach(post => {
-          gymbros.forEach(gymbro => {
-            if (post.gymbro == gymbro.id) {
-              if (gymbro.name.toLowerCase().includes(req.query.name.toLowerCase())) {
+          users.forEach(user => {
+            if (post.user == user.id) {
+              if (user.name.toLowerCase().includes(req.query.name.toLowerCase())) {
                 newPosts.push(post)
               }
             }
@@ -37,22 +39,27 @@ router
         posts = newPosts
       }
 
-      res.render("posts/index", { posts: posts, gymbros: gymbros, searchOptions: req.query })
+      res.render("posts/index", { posts: posts, users: users, searchOptions: req.query, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
     } catch (err) {
       res.redirect('/')
       console.error(err)
     }
   })
   .post(upload.single('postImage'), async (req, res) => {
+    const reqUser = await req.user
     const fileName = req.file != null ? req.file.filename : null
     const createdAtDate = new Date(Date.now()).toISOString().split('T')[0]
-    const postImagePath = path.join('/', Post.postImageBasePath, fileName)
+    const fileType = fileName != null ? req.file.mimetype.split('/')[1] : null
+    console.log(req.file)
+    console.log(typeof (req.file))
+    const postImagePath = fileName != null ? path.join('/', Post.postImageBasePath, fileName) : null
     const post = new Post({
-      gymbro: req.body.gymbro,
+      user: reqUser._id,
       text: req.body.text,
       postImageName: fileName,
       createdAtDate: createdAtDate,
-      postImagePath: postImagePath
+      postImagePath: postImagePath,
+      postImageFileType: fileType
     })
 
     try {
@@ -62,24 +69,26 @@ router
       if (post.postImageName != null) {
         removePostImage(post.postImageName)
       }
-      renderNewPage(res, post, true)
+      renderNewPage(req, res, post, true)
       console.log(err)
     }
   })
 
 // new post route
-router.get('/new', async (req, res) => {
-  renderNewPage(res, new Post())
+router.get('/new', check.checkAuthenticated, async (req, res) => {
+  renderNewPage(req, res, new Post())
 })
 
 
-async function renderNewPage(res, post, hasError = false) {
+async function renderNewPage(req, res, post, hasError = false) {
   try {
-    const gymbros = await Gymbro.find({})
-    const params = { gymbros: gymbros, post: post }
+    const reqUser = await req.user
+    const users = await User.find({})
+    const params = { users: users, post: post, reqUser: reqUser, isAuthenticated: req.isAuthenticated() }
     if (hasError) params.errorMessage = "Error when creating post"
     res.render('posts/new', params)
   } catch (err) {
+    console.log(err)
     res.redirect('/')
   }
 }

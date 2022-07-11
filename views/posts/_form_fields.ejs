@@ -1,11 +1,3 @@
-<div>
-  <label>Gymbro</label>
-  <select name="gymbro" required="true">
-    <% gymbros.forEach(gymbro => { %>
-      <option selected label="<%= gymbro.name %>" value="<%= gymbro.id %>">
-    <% }) %>
-  </select>
-</div>
 
 <div>
   <label>Text</label>
@@ -14,6 +6,5 @@
 
 <div>
   <label>Image</label>
-  <input type="file" name="postImage">
+  <input type="file" name="postImage" />
 </div>
-
