@@ -5,16 +5,15 @@
   <button type="submit">Search</button>
 </form>
 
+
 <% posts.forEach(post => { %>
-  <% let isThisUser %> 
   <% users.forEach(user => { %> 
     <% try { %> 
       <% isThisUser = false %> 
       <% if(reqUser._id === user.id) { %>
-        <% isThisUser = true %> 
-      <% } %> 
-    <% } catch { %> 
-    <% } %>
+        <% isThisUser = true %>
+      <% } %>  
+    <% } catch {} %>
     <% if (user.id == post.user) { %>
       <a href="/users/<%= user.id %>">
         <p><%= user.username %></p>
@@ -41,11 +40,19 @@
 
   <p><%= post.text %></p>
   <p>Likes: <%= post.numOfLikes %></p>
-  <p>Created: <%= post.createdAtDate.toISOString().split('T')[0] %></p>
-  <% if (isThisUser) { %>
-    <a href="/posts">Edit</a>
-    <a href="/posts">Delete</a>
-  <% } %>  
+  <p><%= post.createdAtDate.toISOString().split('T')[0] %></p>
+
+  <% users.forEach(user => { %>
+    <% if (user.id == post.user) { %> 
+      <% try { %>
+        <% if (user.id === reqUser._id) { %>
+          <a href="/posts">Edit</a>
+          <a href="/posts">Delete</a>
+        <% } %>
+      <% } catch {} %>  
+    <% } %> 
+  <% }) %> 
+
   <br />
   <hr />
 <% }) %>

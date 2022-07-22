@@ -19,43 +19,94 @@ router
     } else { filter = false }
 
     try {
-      let users = await User.find({})
+      let query = await User.find({})
+      // Search by username or name
       if (req.query.name != undefined) {
-        let newUsers = []
-        users.forEach(user => {
-          if (user.name.toLowerCase().includes(req.query.name.toLowerCase())) {
-            newUsers.push(user)
-          }
+        query = query.filter(user => {
+          return user.username.toLowerCase().includes(req.query.name.toLowerCase()) || user.name.toLowerCase().includes(req.query.name.toLowerCase())
         })
-        users = newUsers
       }
-
       // Filter section
-      let filteredUsers = []
-      let filtersApplied = { ageRange: false, bodyWeightRange: false }
-      if (req.query.ageRange !== undefined && req.query.ageRange !== 'undefined') {
-        for (let i = 0; i < 10; i++) {
-          let user = await User.find({ age: queryStringToArrayConverter(req.query.ageRange)[i] })
-          filteredUsers.push(user)
-        }
-        filteredUsers = filteredUsers.filter(value => {
-          return value.length !== 0
+      // Rank
+      if (req.query.rank != undefined && req.query.rank !== '') {
+        query = query.filter(user => {
+          return user.rank === req.query.rank
         })
-        let tempUsers = []
-        filteredUsers.forEach(i => {
-          tempUsers.push(i[0])
+      }
+      // Age
+      if (req.query.lowestAge != undefined && req.query.lowestAge !== '') {
+        query = query.filter(user => {
+          return user.age >= req.query.lowestAge
         })
-        filteredUsers = tempUsers
-        filtersApplied.ageRange = true
+      }
+      if (req.query.highestAge != undefined && req.query.highestAge !== '') {
+        query = query.filter(user => {
+          return user.age <= req.query.highestAge
+        })
+      }
+      // Bodyweight
+      if (req.query.lowestBodyWeight != undefined && req.query.lowestBodyWeight !== '') {
+        query = query.filter(user => {
+          return user.bodyWeight >= req.query.lowestBodyWeight
+        })
+      }
+      if (req.query.highestBodyWeight != undefined && req.query.highestBodyWeight !== '') {
+        query = query.filter(user => {
+          return user.bodyWeight <= req.query.highestBodyWeight
+        })
+      }
+      // Height
+      if (req.query.lowestHeight != undefined && req.query.lowestHeight !== '') {
+        query = query.filter(user => {
+          return user.height >= req.query.lowestHeight
+        })
+      }
+      if (req.query.highestHeight != undefined && req.query.highestHeight !== '') {
+        query = query.filter(user => {
+          return user.height <= req.query.highestHeight
+        })
+      }
+      // Favorite exercise
+      if (req.query.favoriteExercise != undefined && req.query.favoriteExercise !== '') {
+        query = query.filter(user => {
+          return user.favoriteExercise.toLowerCase().includes(req.query.favoriteExercise.toLowerCase())
+        })
+      }
+      // Bench PR
+      if (req.query.lowestBench != undefined && req.query.lowestBench !== '') {
+        query = query.filter(user => {
+          return user.bench >= req.query.lowestBench
+        })
+      }
+      if (req.query.highestBench != undefined && req.query.highestBench !== '') {
+        query = query.filter(user => {
+          return user.bench <= req.query.highestBench
+        })
+      }
+      // Squat PR
+      if (req.query.lowestSquat != undefined && req.query.lowestSquat !== '') {
+        query = query.filter(user => {
+          return user.squat >= req.query.lowestSquat
+        })
+      }
+      if (req.query.highestSquat != undefined && req.query.highestSquat !== '') {
+        query = query.filter(user => {
+          return user.squat <= req.query.highestSquat
+        })
+      }
+      // Deadlift PR
+      if (req.query.lowestDeadlift != undefined && req.query.lowestDeadlift !== '') {
+        query = query.filter(user => {
+          return user.deadlift >= req.query.lowestDeadlift
+        })
+      }
+      if (req.query.highestDeadlift != undefined && req.query.highestDeadlift !== '') {
+        query = query.filter(user => {
+          return user.deadlift <= req.query.highestDeadlift
+        })
       }
 
-      if (filteredUsers.length > 0) {
-        users = filteredUsers
-      }
 
-      if (users == undefined) {
-        users = await User.find({})
-      }
 
       /* Don't show reqUser
       try {
@@ -63,6 +114,7 @@ router
           return user.id !== reqUser.id
         })
       } catch { }*/
+      const users = query
       res.render("users/index", {
         users: users,
         searchOptions: req.query,
@@ -87,32 +139,6 @@ router.param('id', async (req, res, next, id) => {
   pageUser = await User.findById(id)
   next()
 })
-
-
-
-function queryStringToArrayConverter(str) {
-  let newArray = []
-  let placeHolder
-  for (let i = 0; i < str.length; i++) {
-    if (!isNaN(str[i])) {
-      if (!isNaN(str[i + 1])) {
-        placeHolder = str[i] + str[i + 1]
-        placeHolder = parseInt(placeHolder)
-      } else {
-        placeHolder = parseInt(str[i])
-      }
-
-      if (!isNaN(placeHolder)) {
-        newArray.push(placeHolder)
-      }
-    }
-  }
-
-  newArray = newArray.filter((value, index) => {
-    return index % 2 == 0
-  })
-  return newArray
-}
 
 
 module.exports = router

@@ -13,7 +13,6 @@ const upload = multer({
   fileFilter: (req, file, callback) => {
     callback(null, imageMimeTypes.includes(file.mimetype))
   }
-
 })
 
 // All post route
@@ -39,6 +38,11 @@ router
         posts = newPosts
       }
 
+      posts = posts.sort(function (a, b) {
+        if (a.createdAtDate > b.createdAtDate) {
+          return -1
+        }
+      })
       res.render("posts/index", { posts: posts, users: users, searchOptions: req.query, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
     } catch (err) {
       res.redirect('/')
@@ -50,8 +54,6 @@ router
     const fileName = req.file != null ? req.file.filename : null
     const createdAtDate = new Date(Date.now()).toISOString().split('T')[0]
     const fileType = fileName != null ? req.file.mimetype.split('/')[1] : null
-    console.log(req.file)
-    console.log(typeof (req.file))
     const postImagePath = fileName != null ? path.join('/', Post.postImageBasePath, fileName) : null
     const post = new Post({
       user: reqUser._id,
