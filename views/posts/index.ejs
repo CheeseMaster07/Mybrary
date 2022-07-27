@@ -1,7 +1,6 @@
 <h1>Search Posts</h1>
 <form action="/posts" method="GET">
-  <label>user</label>
-  <input type="text" name="name" value="<%= searchOptions.name %>" />
+  <input type="text" name="search" value="<%= searchOptions.search %>" />
   <button type="submit">Search</button>
 </form>
 
@@ -46,8 +45,8 @@
     <% if (user.id == post.user) { %> 
       <% try { %>
         <% if (user.id === reqUser._id) { %>
-          <a href="/posts">Edit</a>
-          <a href="/posts">Delete</a>
+          <a href="/posts/<%= post.id %>/edit">Edit</a>
+          <a href="/posts/<%= post.id %>/delete">Delete</a>
         <% } %>
       <% } catch {} %>  
     <% } %> 

@@ -1,13 +1,6 @@
-<% try { %> 
-  <% isThisUser = false %> 
-  <% if(reqUser._id === user.id) { %>
-    <% isThisUser = true %> 
-    <h1>Your profile</h1>
-  <% } %> 
-<% } catch { %> 
-<% } %> 
-
-
+<% if(isThisUser) { %>
+  <h1>Your Profile</h1>
+<% } %>  
 <h2><%= user.username %></h2>
 <p>Name: <%= user.name %></p> </p>
 <p>Age: <%= user.age %></p>
@@ -17,8 +10,7 @@
 <p>Deadlift PR: <%= user.deadlift %> kg</p>
 <br>
 <% if (isThisUser) { %>
-  <a href="/users/<%= user.id %>">Edit</a>
-  <a href="/users/<%= user.id %>">Delete</a>
+  <a href="/users/<%= user.id %>/edit">Edit</a>
 <% } %>  
 <br>
 

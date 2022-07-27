@@ -129,9 +129,30 @@ router
   })
 
 // user by id
-router.get('/:id', async (req, res) => {
-  const reqUser = await req.user
-  res.render("users/user", { user: pageUser, posts: req.posts, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
+router
+  .route('/:id')
+  .get(async (req, res) => {
+    const reqUser = await req.user
+    try {
+      isThisUser = false
+      if (reqUser._id === pageUser.id) {
+        isThisUser = true
+      }
+    } catch { }
+    res.render("users/user", {
+      user: pageUser,
+      posts: req.posts,
+      reqUser: reqUser,
+      isAuthenticated: req.isAuthenticated(),
+      isThisUser: isThisUser
+    })
+  })
+  .put((req, res) => {
+    res.send('Updated ' + pageUser.username)
+  })
+
+router.get('/:id/edit', (req, res) => {
+  res.send('edit ' + pageUser.username)
 })
 
 router.param('id', async (req, res, next, id) => {
