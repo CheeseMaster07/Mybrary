@@ -13,7 +13,6 @@ const upload = multer({
   fileFilter: (req, file, callback) => {
     callback(null, imageMimeTypes.includes(file.mimetype))
   }
-
 })
 
 // All post route
@@ -25,12 +24,14 @@ router
       let posts = await Post.find({})
       const users = await User.find({})
 
-      if (req.query.name !== undefined) {
+      if (req.query.search !== undefined && req.query.search !== " ") {
         newPosts = []
         posts.forEach(post => {
           users.forEach(user => {
             if (post.user == user.id) {
-              if (user.name.toLowerCase().includes(req.query.name.toLowerCase())) {
+              if (user.username.toLowerCase().includes(req.query.search.toLowerCase())
+                || user.name.toLowerCase().includes(req.query.search.toLowerCase())
+                || post.text.toLowerCase().includes(req.query.search.toLowerCase())) {
                 newPosts.push(post)
               }
             }
@@ -39,6 +40,11 @@ router
         posts = newPosts
       }
 
+      posts = posts.sort(function (a, b) {
+        if (a.createdAtDate > b.createdAtDate) {
+          return -1
+        }
+      })
       res.render("posts/index", { posts: posts, users: users, searchOptions: req.query, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
     } catch (err) {
       res.redirect('/')
@@ -50,8 +56,6 @@ router
     const fileName = req.file != null ? req.file.filename : null
     const createdAtDate = new Date(Date.now()).toISOString().split('T')[0]
     const fileType = fileName != null ? req.file.mimetype.split('/')[1] : null
-    console.log(req.file)
-    console.log(typeof (req.file))
     const postImagePath = fileName != null ? path.join('/', Post.postImageBasePath, fileName) : null
     const post = new Post({
       user: reqUser._id,
@@ -79,6 +83,10 @@ router.get('/new', check.checkAuthenticated, async (req, res) => {
   renderNewPage(req, res, new Post())
 })
 
+router.get('/:id/edit', (req, res) => {
+  res.send('Edit ' + postUser.username + "'s" + ' post')
+})
+
 
 async function renderNewPage(req, res, post, hasError = false) {
   try {
@@ -98,6 +106,12 @@ function removePostImage(fileName) {
     if (err) console.error(err)
   })
 }
+
+router.param('id', async (req, res, next, id) => {
+  req.post = await Post.findById(id)
+  postUser = await User.findById(req.post.user)
+  next()
+})
 
 
 module.exports = router

@@ -1,26 +1,50 @@
-<!-- Variables -->
-<% let ageRanges = [] %>
-<% let innerRange = [] %>
-<% for (let i = 0; i < 9; i++) {  %> 
-  <% for (let j = 0; j < 10; j++) { %> 
-    <% innerRange.push((j + i * 10) + 10) %> 
-  <% } %> 
-  <% ageRanges.push(innerRange) %>
-  <% innerRange = [] %>
-<% } %> 
-
-
-<!-- Actual Form -->
 <div> 
   <form action="/users" method="GET">
-    <label>Age</label>
-    <select name="ageRange">
-      <option label="---" value="undefined"></option>
-      <% ageRanges.forEach(ageRange => { %> 
-        <option label="<%= ageRange[0] %> - <%= ageRange[ageRange.length - 1] %>" value="<%= ageRange %> "></option>
-      <% }) %> 
-    </select>
-    <label>Rank</label>
+    <div>
+      <label>Rank</label>
+      <select name="rank">
+        <option value="">---</option>
+        <option value="Fitness Legend">Fitness Legend</option>
+        <option value="Sarm Goblin">Sarm Goblin</option>
+        <option value="Gymbro">Gymbro</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Newbie">Newbie</option>
+      </select>
+    </div>
+    <div>
+      <label>Age</label>
+      <input type="number" name="lowestAge" placeholder="Lowest">
+      <input type="number" name="highestAge" placeholder="Highest">
+    </div>
+    <div> 
+      <label>Bodyweight</label>
+      <input type="number" name="lowestBodyWeight" placeholder="Lowest">
+      <input type="number" name="highestBodyWeight" placeholder="Highest">
+    </div>
+    <div> 
+      <label>Height</label>
+      <input type="number" name="lowestHeight" placeholder="Lowest">
+      <input type="number" name="highestHeight" placeholder="Highest">
+    </div>
+    <div> 
+      <label>Favorite exercise</label>
+      <input type="text" name="favoriteExercise">
+    </div>
+    <div> 
+      <label>Bench PR</label>
+      <input type="number" name="lowestBench" placeholder="Lowest">
+      <input type="number" name="highestBench" placeholder="Highest">
+    </div>
+    <div> 
+      <label>Squat PR</label>
+      <input type="number" name="lowestSquat" placeholder="Lowest">
+      <input type="number" name="highestSquat" placeholder="Highest">
+    </div>
+    <div> 
+      <label>Deadlift PR</label>
+      <input type="number" name="lowestDeadlift" placeholder="Lowest">
+      <input type="number" name="highestDeadlift" placeholder="Highest">
+    </div>
     <br>
     <button type="submit" name="applyFilter">Apply</button>
   </form>

@@ -1,6 +1,38 @@
 <h2>Ranks</h2>
-<p>Fitness Legend</p>
+
+<% userRank = "(You are here)" %> 
+
+<div>
+  <p>Fitness Legend</p>
+  <% if (locals.reqUser.rank == 'Fitness Legend') { %> 
+    <%= userRank %>
+  <% } %>  
+</div>
+
+<div>
 <p>Sarm Goblin</p>
+<% if (locals.reqUser.rank == 'Sarm Goblin') { %> 
+  <%= userRank %> 
+<% } %>
+</div>
+
+<div>
 <p>Gymbro</p>
+<% if (locals.reqUser.rank == 'Gymbro') { %> 
+  <%= userRank %>
+<% } %>
+</div>
+
+<div>
 <p>Intermediate</p>
+<% if (locals.reqUser.rank == 'Intermediate') { %> 
+  <%= userRank %> 
+<% } %>
+</div>
+
+<div>
 <p>Newbie</p>
+<% if (locals.reqUser.rank == 'Newbie') { %> 
+  <%= userRank %>
+<% } %>
+</div>
