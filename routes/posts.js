@@ -1,19 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const User = require('../models/user')
 const Post = require('../models/post')
 const check = require('../funcs')
-const uploadPath = path.join('public', Post.postImageBasePath)
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'video/mp4']
-const upload = multer({
-  dest: uploadPath,
-  fileFilter: (req, file, callback) => {
-    callback(null, imageMimeTypes.includes(file.mimetype))
-  }
-})
 
 // All post route
 router
@@ -41,7 +31,7 @@ router
       }
 
       posts = posts.sort(function (a, b) {
-        if (a.createdAtDate > b.createdAtDate) {
+        if (a.createdAtDateOrdering > b.createdAtDateOrdering) {
           return -1
         }
       })
@@ -51,28 +41,23 @@ router
       console.error(err)
     }
   })
-  .post(upload.single('postImage'), async (req, res) => {
+  .post(async (req, res) => {
     const reqUser = await req.user
-    const fileName = req.file != null ? req.file.filename : null
-    const createdAtDate = new Date(Date.now()).toISOString().split('T')[0]
-    const fileType = fileName != null ? req.file.mimetype.split('/')[1] : null
-    const postImagePath = fileName != null ? path.join('/', Post.postImageBasePath, fileName) : null
+    const createdAtDate = new Date(Date.now())
+    const x = Date.now().toString()
+    const y = createdAtDate.toISOString().split('T')[0].split('-')
+    const createdAtDateOrdering = y[0] + y[1] + y[2] + x
     const post = new Post({
       user: reqUser._id,
       text: req.body.text,
-      postImageName: fileName,
       createdAtDate: createdAtDate,
-      postImagePath: postImagePath,
-      postImageFileType: fileType
+      createdAtDateOrdering: createdAtDateOrdering
     })
-
+    savePostImage(post, req.body.postImage)
     try {
       const newPost = await post.save()
       res.redirect('/posts')
     } catch (err) {
-      if (post.postImageName != null) {
-        removePostImage(post.postImageName)
-      }
       renderNewPage(req, res, post, true)
       console.log(err)
     }
@@ -101,10 +86,16 @@ async function renderNewPage(req, res, post, hasError = false) {
   }
 }
 
-function removePostImage(fileName) {
-  fs.unlink(path.join(uploadPath, fileName), err => {
-    if (err) console.error(err)
-  })
+function savePostImage(post, postImageEncoded) {
+  if (postImageEncoded == null || postImageEncoded == "") {
+    console.log('ok')
+    return
+  }
+  const postImage = JSON.parse(postImageEncoded)
+  if (postImage != null && imageMimeTypes.includes(postImage.type)) {
+    post.postImage = new Buffer.from(postImage.data, 'base64')
+    post.postImageType = postImage.type
+  }
 }
 
 router.param('id', async (req, res, next, id) => {

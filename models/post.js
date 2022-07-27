@@ -1,7 +1,4 @@
 const mongoose = require('mongoose')
-const path = require('path')
-
-const postImageBasePath = 'uploads/postImages'
 
 const postSchema = new mongoose.Schema({
   user: {
@@ -17,24 +14,27 @@ const postSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  createdAtDateOrdering: {
+    type: String
+  },
   numOfLikes: {
     type: Number,
     required: true,
     default: 0
   },
-  postImageName: {
-    type: String
+  postImage: {
+    type: Buffer,
+    required: true
   },
-  postImagePath: {
-    type: String
-  },
-  postImageFileType: {
+  postImageType: {
     type: String
   }
-
-
 })
 
+postSchema.virtual('postImagePath').get(function () {
+  if (this.postImage != null && this.postImageType != null) {
+    return `data:${this.postImageType};charset=utf-8;base64,${this.postImage.toString('base64')}`
+  }
+})
 
 module.exports = mongoose.model('Post', postSchema)
-module.exports.postImageBasePath = postImageBasePath
