@@ -147,12 +147,35 @@ router
       isThisUser: isThisUser
     })
   })
-  .put((req, res) => {
-    res.send('Updated ' + pageUser.username)
+  .put(async (req, res) => {
+    let user = pageUser
+    try {
+      user.name = req.body.name
+      user.age = req.body.age
+      user.bodyWeight = req.body.bodyWeight
+      user.height = req.body.height
+      user.favoriteExercise = req.body.favoriteExercise
+      user.bench = req.body.bench
+      user.squat = req.body.squat
+      user.deadlift = req.body.deadlift
+      await user.save()
+      res.redirect(`/users/${user.id}`)
+    } catch (err) {
+      if (user = null) {
+        res.redirect('/')
+      } else {
+        res.render('users/edit', { user: pageUser, reqUser: reqUser, isAuthenticated: req.isAuthenticated(), errorMessage: "Error when editing user" })
+        console.log(err)
+      }
+    }
+  })
+  .delete((req, res) => {
+    res.send('Deleted ' + pageUser.username)
   })
 
-router.get('/:id/edit', (req, res) => {
-  res.send('edit ' + pageUser.username)
+router.get('/:id/edit', async (req, res) => {
+  const reqUser = await req.user
+  res.render('users/edit', { user: pageUser, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
 })
 
 router.param('id', async (req, res, next, id) => {

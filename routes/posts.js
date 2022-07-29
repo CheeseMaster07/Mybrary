@@ -68,8 +68,40 @@ router.get('/new', check.checkAuthenticated, async (req, res) => {
   renderNewPage(req, res, new Post())
 })
 
+router
+  .route('/:id')
+  .put(async (req, res) => {
+    let post = req.post
+    try {
+      post.text = req.body.text
+      await post.save()
+      res.redirect('/posts')
+    } catch (err) {
+      if (post = null) {
+        res.redirect('/')
+      } else {
+        res.render('posts/edit', { post: post, reqUser: reqUser, isAuthenticated: req.isAuthenticated(), errorMessage: "Error when updating post" })
+        console.log(err)
+      }
+    }
+  })
+  .delete(async (req, res) => {
+    let post = req.post
+    try {
+      await post.remove()
+      res.redirect('/posts')
+    } catch (err) {
+      if (post = null) {
+        res.redirect('/')
+      } else {
+        res.redirect('/posts')
+        console.log(err)
+      }
+    }
+  })
+
 router.get('/:id/edit', (req, res) => {
-  res.send('Edit ' + postUser.username + "'s" + ' post')
+  res.render('posts/edit', { post: req.post, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
 })
 
 
@@ -78,7 +110,7 @@ async function renderNewPage(req, res, post, hasError = false) {
     const reqUser = await req.user
     const users = await User.find({})
     const params = { users: users, post: post, reqUser: reqUser, isAuthenticated: req.isAuthenticated() }
-    if (hasError) params.errorMessage = "Error when creating post"
+    if (hasError) params.errorMessage = "Error when creating post. You can only post images"
     res.render('posts/new', params)
   } catch (err) {
     console.log(err)
@@ -99,6 +131,7 @@ function savePostImage(post, postImageEncoded) {
 }
 
 router.param('id', async (req, res, next, id) => {
+  reqUser = await req.user
   req.post = await Post.findById(id)
   postUser = await User.findById(req.post.user)
   next()

@@ -46,7 +46,7 @@
       <% try { %>
         <% if (user.id === reqUser._id) { %>
           <a href="/posts/<%= post.id %>/edit">Edit</a>
-          <a href="/posts/<%= post.id %>/delete">Delete</a>
+          <%- include('../partials/deleteForm', {url: `/posts/${post.id}`}) %> 
         <% } %>
       <% } catch {} %>  
     <% } %> 

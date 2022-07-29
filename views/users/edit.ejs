@@ -1,0 +1,8 @@
+<h2>Edit info</h2>
+<br />
+<br />
+<form action="/users/<%= user.id %>?_method=PUT" method="POST">
+  <%- include('../registration/_form_fields') %>
+  <a href="/users">Cancel</a>
+  <button type="submit" name="infoForm">Save</button>
+</form>
