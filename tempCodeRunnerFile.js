@@ -1,2 +1,1 @@
-
-    age: 36
+onsole.log(x)

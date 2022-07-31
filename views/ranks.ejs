@@ -4,35 +4,45 @@
 
 <div>
   <p>Fitness Legend</p>
-  <% if (locals.reqUser.rank == 'Fitness Legend') { %> 
+  <% if(locals.isAuthenticated) {%>
+    <% if (reqUser.rank == 'Fitness Legend') { %> 
+      <%= userRank %>
+    <% } %>
+  <% } %> 
+</div>
+
+<div>
+  <p>Sarm Goblin</p>
+  <% if(locals.isAuthenticated) {%>
+    <% if (reqUser.rank == 'Sarm Goblin') { %> 
+      <%= userRank %>
+    <% } %>
+  <% } %> 
+</div>
+
+<div>
+  <p>Gymbro</p>
+  <% if(locals.isAuthenticated) {%>
+    <% if (reqUser.rank == 'Gymbro') { %> 
     <%= userRank %>
-  <% } %>  
+    <% } %>
+  <% } %> 
 </div>
 
 <div>
-<p>Sarm Goblin</p>
-<% if (locals.reqUser.rank == 'Sarm Goblin') { %> 
-  <%= userRank %> 
-<% } %>
-</div>
-
-<div>
-<p>Gymbro</p>
-<% if (locals.reqUser.rank == 'Gymbro') { %> 
-  <%= userRank %>
-<% } %>
-</div>
-
-<div>
-<p>Intermediate</p>
-<% if (locals.reqUser.rank == 'Intermediate') { %> 
-  <%= userRank %> 
-<% } %>
+  <p>Intermediate</p>
+  <% if(locals.isAuthenticated) {%>
+    <% if (reqUser.rank == 'Intermediate') { %> 
+      <%= userRank %>
+    <% } %>
+  <% } %> 
 </div>
 
 <div>
 <p>Newbie</p>
-<% if (locals.reqUser.rank == 'Newbie') { %> 
-  <%= userRank %>
-<% } %>
+  <% if(locals.isAuthenticated) {%>
+    <% if (reqUser.rank == 'Newbie') { %> 
+      <%= userRank %>
+    <% } %>
+  <% } %> 
 </div>

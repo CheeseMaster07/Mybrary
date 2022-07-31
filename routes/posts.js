@@ -1,19 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const User = require('../models/user')
 const Post = require('../models/post')
+const Comment = require('../models/comment')
 const check = require('../funcs')
-const uploadPath = path.join('public', Post.postImageBasePath)
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'video/mp4']
-const upload = multer({
-  dest: uploadPath,
-  fileFilter: (req, file, callback) => {
-    callback(null, imageMimeTypes.includes(file.mimetype))
-  }
-})
 
 // All post route
 router
@@ -23,6 +14,7 @@ router
     try {
       let posts = await Post.find({})
       const users = await User.find({})
+      const postUser = User.findById()
 
       if (req.query.search !== undefined && req.query.search !== " ") {
         newPosts = []
@@ -41,7 +33,7 @@ router
       }
 
       posts = posts.sort(function (a, b) {
-        if (a.createdAtDate > b.createdAtDate) {
+        if (a.createdAtDateOrdering > b.createdAtDateOrdering) {
           return -1
         }
       })
@@ -51,28 +43,23 @@ router
       console.error(err)
     }
   })
-  .post(upload.single('postImage'), async (req, res) => {
+  .post(async (req, res) => {
     const reqUser = await req.user
-    const fileName = req.file != null ? req.file.filename : null
-    const createdAtDate = new Date(Date.now()).toISOString().split('T')[0]
-    const fileType = fileName != null ? req.file.mimetype.split('/')[1] : null
-    const postImagePath = fileName != null ? path.join('/', Post.postImageBasePath, fileName) : null
+    const createdAtDate = new Date(Date.now())
+    const x = Date.now().toString()
+    const y = createdAtDate.toISOString().split('T')[0].split('-')
+    const createdAtDateOrdering = y[0] + y[1] + y[2] + x
     const post = new Post({
       user: reqUser._id,
       text: req.body.text,
-      postImageName: fileName,
       createdAtDate: createdAtDate,
-      postImagePath: postImagePath,
-      postImageFileType: fileType
+      createdAtDateOrdering: createdAtDateOrdering
     })
-
+    savePostImage(post, req.body.postImage)
     try {
       const newPost = await post.save()
       res.redirect('/posts')
     } catch (err) {
-      if (post.postImageName != null) {
-        removePostImage(post.postImageName)
-      }
       renderNewPage(req, res, post, true)
       console.log(err)
     }
@@ -83,9 +70,93 @@ router.get('/new', check.checkAuthenticated, async (req, res) => {
   renderNewPage(req, res, new Post())
 })
 
+router
+  .route('/:id')
+  .put(async (req, res) => {
+    let post = req.post
+    try {
+      post.text = req.body.text
+      await post.save()
+      res.redirect('/posts')
+    } catch (err) {
+      if (post = null) {
+        res.redirect('/')
+      } else {
+        res.render('posts/edit', { post: post, reqUser: reqUser, isAuthenticated: req.isAuthenticated(), errorMessage: "Error when updating post" })
+        console.log(err)
+      }
+    }
+  })
+  .delete(async (req, res) => {
+    let post = req.post
+    try {
+      await post.remove()
+      res.redirect('/posts')
+    } catch (err) {
+      if (post = null) {
+        res.redirect('/')
+      } else {
+        res.redirect('/posts')
+        console.log(err)
+      }
+    }
+  })
+
 router.get('/:id/edit', (req, res) => {
-  res.send('Edit ' + postUser.username + "'s" + ' post')
+  res.render('posts/edit', { post: req.post, postUser: postUser, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
 })
+
+router
+  .route('/:id/comments')
+  .get(async (req, res) => {
+    typeComment = new Comment()
+    const users = await User.find({})
+    let comments = await Comment.find({ post: req.post.id })
+    const creator = postUser
+    comments = comments.sort(function (a, b) {
+      if (a.createdAtDateOrdering > b.createdAtDateOrdering) {
+        return -1
+      }
+    })
+    res.render('posts/comments', {
+      post: req.post,
+      comments: comments,
+      typeComment: typeComment,
+      users: users,
+      reqUser: reqUser,
+      creator: creator,
+      isAuthenticated: req.isAuthenticated()
+    })
+  })
+  .post(async (req, res) => {
+    const reqUser = await req.user
+    const createdAtDate = new Date(Date.now())
+    const x = Date.now().toString()
+    const y = createdAtDate.toISOString().split('T')[0].split('-')
+    const createdAtDateOrdering = y[0] + y[1] + y[2] + x
+    const comment = new Comment({
+      user: reqUser._id,
+      post: req.post.id,
+      text: req.body.text,
+      createdAtDate: createdAtDate,
+      createdAtDateOrdering: createdAtDateOrdering
+    })
+    try {
+      const newComment = await comment.save()
+      res.redirect(`/posts/${req.post.id}/comments`)
+    } catch (err) {
+      res.render('posts/comments', {
+        post: req.post,
+        comments: comments,
+        typeComment: typeComment,
+        users: users,
+        reqUser: reqUser,
+        isAuthenticated: req.isAuthenticated(),
+        errorMessage: "Error when creating comment"
+      })
+      console.log(err)
+    }
+  })
 
 
 async function renderNewPage(req, res, post, hasError = false) {
@@ -93,7 +164,7 @@ async function renderNewPage(req, res, post, hasError = false) {
     const reqUser = await req.user
     const users = await User.find({})
     const params = { users: users, post: post, reqUser: reqUser, isAuthenticated: req.isAuthenticated() }
-    if (hasError) params.errorMessage = "Error when creating post"
+    if (hasError) params.errorMessage = "Error when creating post. You can only post images"
     res.render('posts/new', params)
   } catch (err) {
     console.log(err)
@@ -101,13 +172,20 @@ async function renderNewPage(req, res, post, hasError = false) {
   }
 }
 
-function removePostImage(fileName) {
-  fs.unlink(path.join(uploadPath, fileName), err => {
-    if (err) console.error(err)
-  })
+function savePostImage(post, postImageEncoded) {
+  if (postImageEncoded == null || postImageEncoded == "") {
+    console.log('ok')
+    return
+  }
+  const postImage = JSON.parse(postImageEncoded)
+  if (postImage != null && imageMimeTypes.includes(postImage.type)) {
+    post.postImage = new Buffer.from(postImage.data, 'base64')
+    post.postImageType = postImage.type
+  }
 }
 
 router.param('id', async (req, res, next, id) => {
+  reqUser = await req.user
   req.post = await Post.findById(id)
   postUser = await User.findById(req.post.user)
   next()
