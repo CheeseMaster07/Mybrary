@@ -1,0 +1,40 @@
+.ranksHeader {
+  font-size: 25px;
+}
+
+.userRank {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.fitnessLegend {
+  color: gold;
+  font-size: 30px;
+  display: inline-block;
+}
+
+.sarmGoblin {
+  color: silver;
+  font-size: 27px;
+  display: inline-block;
+
+}
+
+.gymbro {
+  color: rgb(209, 126, 31);
+  font-size: 25px;
+  display: inline-block;
+
+}
+
+.intermediate {
+  font-size: 20px;
+  display: inline-block;
+
+}
+
+.newbie {
+  font-size: 17px;
+  display: inline-block;
+
+}

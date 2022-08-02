@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user')
 const Post = require('../models/post')
+const Comment = require('../models/comment')
 const check = require('../funcs')
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'video/mp4']
 
@@ -13,6 +14,7 @@ router
     try {
       let posts = await Post.find({})
       const users = await User.find({})
+      const postUser = User.findById()
 
       if (req.query.search !== undefined && req.query.search !== " ") {
         newPosts = []
@@ -35,7 +37,14 @@ router
           return -1
         }
       })
-      res.render("posts/index", { posts: posts, users: users, searchOptions: req.query, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
+      res.render("posts/index", {
+        posts: posts,
+        users: users,
+        searchOptions: req.query,
+        isThisUser: isThisUser,
+        reqUser: reqUser,
+        isAuthenticated: req.isAuthenticated()
+      })
     } catch (err) {
       res.redirect('/')
       console.error(err)
@@ -101,8 +110,59 @@ router
   })
 
 router.get('/:id/edit', (req, res) => {
-  res.render('posts/edit', { post: req.post, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
+  res.render('posts/edit', { post: req.post, postUser: postUser, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
 })
+
+router
+  .route('/:id/comments')
+  .get(async (req, res) => {
+    typeComment = new Comment()
+    const users = await User.find({})
+    let comments = await Comment.find({ post: req.post.id })
+    comments = comments.sort(function (a, b) {
+      if (a.createdAtDateOrdering > b.createdAtDateOrdering) {
+        return -1
+      }
+    })
+    res.render('posts/comments', {
+      post: req.post,
+      comments: comments,
+      typeComment: typeComment,
+      users: users,
+      isThisUser: isThisUser,
+      reqUser: reqUser,
+      isAuthenticated: req.isAuthenticated()
+    })
+  })
+  .post(async (req, res) => {
+    const reqUser = await req.user
+    const createdAtDate = new Date(Date.now())
+    const x = Date.now().toString()
+    const y = createdAtDate.toISOString().split('T')[0].split('-')
+    const createdAtDateOrdering = y[0] + y[1] + y[2] + x
+    const comment = new Comment({
+      user: reqUser._id,
+      post: req.post.id,
+      text: req.body.text,
+      createdAtDate: createdAtDate,
+      createdAtDateOrdering: createdAtDateOrdering
+    })
+    try {
+      const newComment = await comment.save()
+      res.redirect(`/posts/${req.post.id}/comments`)
+    } catch (err) {
+      res.render('posts/comments', {
+        post: req.post,
+        comments: comments,
+        typeComment: typeComment,
+        users: users,
+        reqUser: reqUser,
+        isAuthenticated: req.isAuthenticated(),
+        errorMessage: "Error when creating comment"
+      })
+      console.log(err)
+    }
+  })
 
 
 async function renderNewPage(req, res, post, hasError = false) {
@@ -127,6 +187,17 @@ function savePostImage(post, postImageEncoded) {
   if (postImage != null && imageMimeTypes.includes(postImage.type)) {
     post.postImage = new Buffer.from(postImage.data, 'base64')
     post.postImageType = postImage.type
+  }
+}
+
+function isThisUser(reqUser, user) {
+  try {
+    if (reqUser._id === user.id) {
+      return true
+    }
+    return false
+  } catch {
+    return false
   }
 }
 

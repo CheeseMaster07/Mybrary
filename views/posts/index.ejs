@@ -6,26 +6,20 @@
 
 
 <% posts.forEach(post => { %>
-  <% users.forEach(user => { %> 
-    <% try { %> 
-      <% isThisUser = false %> 
-      <% if(reqUser._id === user.id) { %>
-        <% isThisUser = true %>
-      <% } %>  
-    <% } catch {} %>
+  <% users.forEach(user => { %>
     <% if (user.id == post.user) { %>
       <a href="/users/<%= user.id %>">
         <p><%= user.username %></p>
       </a>
-      <% if(isThisUser) { %>
+      <% if(isThisUser(reqUser, user)) { %>
         <p>(You)</p>
       <% } %>  
     <% } %> 
   <% }) %>
   <% if (post.postImagePath != null) { %>
     <% if(post.postImageFileType !== 'mp4') { %>
-      <div style="width: 275px">
-        <img src="<%= post.postImagePath %>" width="100%"/>
+      <div class="postImageDiv" style="width: 275px">
+        <img class="postImage" src="<%= post.postImagePath %>" width="100%"/>
       </div>
     <% } else { %>
       <div style="width: 275px">
@@ -38,17 +32,21 @@
   <% } %>
 
   <p><%= post.text %></p>
-  <p>Likes: <%= post.numOfLikes %></p>
+  <div class="likeDiv">
+    <button class="likeButton">
+      <img class="likeButtonImg" src="/images/like_button.png" alt="Like button icon">
+    </button>
+    <p class="numOfLikes"><%= post.numOfLikes %></p>
+  </div>
   <p><%= post.createdAtDate.toISOString().split('T')[0] %></p>
 
   <% users.forEach(user => { %>
     <% if (user.id == post.user) { %> 
-      <% try { %>
-        <% if (user.id === reqUser._id) { %>
-          <a href="/posts/<%= post.id %>/edit">Edit</a>
-          <%- include('../partials/deleteForm', {url: `/posts/${post.id}`}) %> 
-        <% } %>
-      <% } catch {} %>  
+      <% if (isThisUser(reqUser, user)) { %>
+        <a href="/posts/<%= post.id %>/edit">Edit</a>
+        <%- include('../partials/deleteForm', {url: `/posts/${post.id}`}) %> 
+      <% } %>
+      <a href="/posts/<%= post.id %>/comments">Comments</a>
     <% } %> 
   <% }) %> 
 

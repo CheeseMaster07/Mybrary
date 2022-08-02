@@ -1,4 +1,4 @@
-<% if(isThisUser) { %>
+<% if(isThisUser(reqUser, pageUser)) { %>
   <h1>Your Profile</h1>
 <% } %>  
 <h2><%= user.username %></h2>
@@ -9,7 +9,7 @@
 <p>Squat PR: <%= user.squat %> kg</p>
 <p>Deadlift PR: <%= user.deadlift %> kg</p>
 <br>
-<% if (isThisUser) { %>
+<% if(isThisUser(reqUser, pageUser)) { %>
   <a href="/users/<%= user.id %>/edit">Edit</a>
 <% } %>  
 <br>
@@ -41,18 +41,17 @@
     <p>Created: <%= post.createdAtDate.toISOString().split('T')[0] %></p>
 
     <% if (user.id == post.user) { %> 
-      <% try { %>
-        <% if (user.id === reqUser._id) { %>
-          <a href="/posts/<%= post.id %>/edit">Edit</a>
-          <%- include('../partials/deleteForm', {url: `/posts/${post.id}`}) %> 
-        <% } %>
-      <% } catch {} %>  
+      <% if(isThisUser(reqUser, pageUser)) { %>
+        <a href="/posts/<%= post.id %>/edit">Edit</a>
+        <%- include('../partials/deleteForm', {url: `/posts/${post.id}`}) %> 
+      <% } %>
     <% } %> 
+    <a href="/posts/<%= post.id %>/comments">Comments</a>
     <br />
     <hr>
   <% }) %> 
 <% } else { %>
-  <% if(isThisUser) { %> 
+  <% if(isThisUser(reqUser, pageUser)) { %> 
     <p> You havn't posted anything yet</p>
   <% } else { %>
     <p><%= user.username %> hasn't posted anything yet</p>

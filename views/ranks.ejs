@@ -1,48 +1,48 @@
-<h2>Ranks</h2>
+<h1 class="ranksHeader">Ranks</h1>
 
 <% userRank = "(You are here)" %> 
 
-<div>
-  <p>Fitness Legend</p>
+<div class="ranksDiv">
+  <p class="fitnessLegend">Fitness Legend</p>
   <% if(locals.isAuthenticated) {%>
     <% if (reqUser.rank == 'Fitness Legend') { %> 
-      <%= userRank %>
+      <p class="userRank"><%= userRank %></p>
     <% } %>
   <% } %> 
 </div>
 
-<div>
-  <p>Sarm Goblin</p>
+<div class="ranksDiv">
+  <p class="sarmGoblin">Sarm Goblin</p>
   <% if(locals.isAuthenticated) {%>
     <% if (reqUser.rank == 'Sarm Goblin') { %> 
-      <%= userRank %>
+      <p class="userRank"><%= userRank %></p>
     <% } %>
   <% } %> 
 </div>
 
-<div>
-  <p>Gymbro</p>
+<div class="ranksDiv">
+  <p class="gymbro">Gymbro</p>
   <% if(locals.isAuthenticated) {%>
     <% if (reqUser.rank == 'Gymbro') { %> 
-    <%= userRank %>
+      <p class="userRank"><%= userRank %></p>
     <% } %>
   <% } %> 
 </div>
 
-<div>
-  <p>Intermediate</p>
+<div class="ranksDiv">
+  <p class="intermediate">Intermediate</p>
   <% if(locals.isAuthenticated) {%>
     <% if (reqUser.rank == 'Intermediate') { %> 
-      <%= userRank %>
+      <p class="userRank"><%= userRank %></p>
     <% } %>
   <% } %> 
 </div>
 
-<div>
-<p>Newbie</p>
+<div class="ranksDiv">
+<p class="newbie">Newbie</p>
   <% if(locals.isAuthenticated) {%>
     <% if (reqUser.rank == 'Newbie') { %> 
-      <%= userRank %>
+      <p class="userRank"><%= userRank %></p>
     <% } %>
   <% } %> 
 </div>

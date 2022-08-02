@@ -1,0 +1,7 @@
+@import 'fonts.css';
+@import 'ranks.css';
+@import 'posts/index.css';
+
+body {
+  background-color: rgba(15, 15, 15, 0.952);
+}

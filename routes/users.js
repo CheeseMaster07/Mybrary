@@ -119,6 +119,7 @@ router
         users: users,
         searchOptions: req.query,
         filter: filter,
+        isThisUser: isThisUser,
         reqUser: reqUser,
         isAuthenticated: req.isAuthenticated()
       });
@@ -133,12 +134,6 @@ router
   .route('/:id')
   .get(async (req, res) => {
     const reqUser = await req.user
-    try {
-      isThisUser = false
-      if (reqUser._id === pageUser.id) {
-        isThisUser = true
-      }
-    } catch { }
     res.render("users/user", {
       user: pageUser,
       posts: req.posts,
@@ -177,6 +172,17 @@ router.get('/:id/edit', async (req, res) => {
   const reqUser = await req.user
   res.render('users/edit', { user: pageUser, reqUser: reqUser, isAuthenticated: req.isAuthenticated() })
 })
+
+function isThisUser(reqUser, user) {
+  try {
+    if (reqUser._id === user.id) {
+      return true
+    }
+    return false
+  } catch {
+    return false
+  }
+}
 
 router.param('id', async (req, res, next, id) => {
   req.posts = await Post.find({ user: id })

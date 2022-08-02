@@ -18,13 +18,9 @@
     <a href='/users/<%= user.id %>'>
       <h2><%= user.username %></h2>
     </a>
-    <% try { %> 
-      <% isThisUser = false %> 
-      <% if(reqUser._id === user.id) { %>
-        <% isThisUser = true %> 
-        <h2>(You)</h2>
-      <% } %> 
-    <% } catch {}%> 
+    <% if (isThisUser(reqUser, user)) { %>
+      (You)
+    <% } %>  
   </div>  
   <p>Rank: <%= user.rank %></p>
   <p>Name: <%= user.name %></p>

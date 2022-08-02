@@ -1,0 +1,44 @@
+<a href="">
+  <p><%= postUser.username %></p>
+</a>
+<% if (post.postImagePath != null) { %>
+  <div style="width: 275px">
+    <img src="<%= post.postImagePath %>" width="100%"/>
+  </div> 
+<% } %> 
+<p><%= post.text %></p>
+<p>Likes: <%= post.numOfLikes %></p>
+<p><%= post.createdAtDate.toISOString().split('T')[0] %></p>
+<hr>
+<h2>Comments</h2>
+<% if (isAuthenticated) { %>
+  <form action="/posts/<%= post.id %>/comments" method="POST">
+    <%- include('_comment_form_fields') %>
+    <button type="submit">Publish</button>
+  </form>
+<% } %> 
+
+<% comments.forEach((comment) => { %> 
+  <% users.forEach(user => { %>
+    <% if (user.id == comment.user) { %>
+      <a href="/users/<%= user.id %>">
+        <p><%= user.username %></p>
+      </a>
+      <% if(isThisUser(reqUser, user)) { %>
+        <p>(You)</p>
+      <% } %>
+      <% if(user.id == postUser.id) { %>
+        <p>(Creator)</p>
+      <% } %>
+    <% } %>   
+  <% }) %> 
+  <%= comment.text %> 
+  <p>Likes: <%= post.numOfLikes %></p>
+  <p><%= post.createdAtDate.toISOString().split('T')[0] %></p>
+  <br>
+  <hr>
+<% }) %> 
+
+<% if(comments.length == 0) { %> 
+  <p>No comments yet</p>
+<% } %> 
